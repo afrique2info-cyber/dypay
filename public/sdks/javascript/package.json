@@ -1,0 +1,35 @@
+{
+  "name": "dypay",
+  "version": "1.0.0",
+  "description": "SDK JavaScript/Node.js officiel pour intégrer Dypay dans vos applications",
+  "main": "dypay.js",
+  "types": "dypay.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "dypay",
+    "payment",
+    "mobile money",
+    "africa",
+    "cameroon",
+    "senegal",
+    "payment gateway",
+    "javascript",
+    "nodejs"
+  ],
+  "author": "Dypay <support@dypay.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dypay/dypay-js"
+  },
+  "bugs": {
+    "url": "https://github.com/dypay/dypay-js/issues"
+  },
+  "homepage": "https://dypay.com"
+}

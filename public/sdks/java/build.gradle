@@ -1,0 +1,68 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group = 'com.dypay'
+version = '1.0.0'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.json:json:20231013'
+
+    // Test dependencies
+    testImplementation 'junit:junit:4.13.2'
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'Dypay Java SDK'
+                description = 'SDK Java officiel pour intégrer Dypay dans vos applications'
+                url = 'https://dypay.com'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'dypay'
+                        name = 'Dypay Team'
+                        email = 'support@dypay.com'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/dypay/dypay-java.git'
+                    developerConnection = 'scm:git:ssh://github.com:dypay/dypay-java.git'
+                    url = 'https://github.com/dypay/dypay-java'
+                }
+            }
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Javadoc) {
+    options.encoding = 'UTF-8'
+}

@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #3B82F6;
+  --color-secondary: #1E40AF;
+  --color-accent: #F59E0B;
+  --color-background: #FFFFFF;
+  --color-surface: #F9FAFB;
+  --color-text: #111827;
+  --color-text-secondary: #6B7280;
+  --color-border: #E5E7EB;
+
+  --font-heading: 'Inter, sans-serif';
+  --font-body: 'Inter, sans-serif';
+}
+
+.theme-minimal {
+  --color-primary: #000000;
+  --color-secondary: #FFFFFF;
+  --color-accent: #3B82F6;
+}
+
+.theme-modern .shop-header {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+}
+
+.theme-modern .product-card {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+}
+
+.theme-elegant {
+  font-family: var(--font-body);
+}
+
+.theme-elegant h1,
+.theme-elegant h2,
+.theme-elegant h3 {
+  font-family: var(--font-heading);
+}
+
+.theme-bold .product-card {
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.theme-classic .shop-header {
+  border-bottom: 3px solid var(--color-primary);
+}
+
+[data-theme-spacing="compact"] .product-grid {
+  gap: 1rem;
+}
+
+[data-theme-spacing="comfortable"] .product-grid {
+  gap: 1.5rem;
+}
+
+[data-theme-spacing="spacious"] .product-grid {
+  gap: 2rem;
+}
+
+[data-theme-spacing="generous"] .product-grid {
+  gap: 2.5rem;
+}
+
+[data-theme-border-radius="minimal"] .product-card,
+[data-theme-border-radius="minimal"] button {
+  border-radius: 0.25rem;
+}
+
+[data-theme-border-radius="slight"] .product-card,
+[data-theme-border-radius="slight"] button {
+  border-radius: 0.5rem;
+}
+
+[data-theme-border-radius="rounded"] .product-card,
+[data-theme-border-radius="rounded"] button {
+  border-radius: 1rem;
+}
+
+.themed-button {
+  background-color: var(--color-accent);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.themed-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.themed-text-primary {
+  color: var(--color-text);
+}
+
+.themed-text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.themed-bg-surface {
+  background-color: var(--color-surface);
+}
+
+.themed-border {
+  border-color: var(--color-border);
+}

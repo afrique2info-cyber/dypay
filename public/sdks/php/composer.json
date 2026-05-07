@@ -1,0 +1,33 @@
+{
+  "name": "dypay/php-sdk",
+  "description": "SDK PHP officiel pour intégrer Dypay dans vos applications PHP",
+  "version": "1.0.0",
+  "type": "library",
+  "keywords": [
+    "dypay",
+    "payment",
+    "mobile money",
+    "africa",
+    "cameroon",
+    "senegal",
+    "payment gateway"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dypay",
+      "email": "support@dypay.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.4",
+    "ext-curl": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Dypay\\": ""
+    }
+  },
+  "minimum-stability": "stable"
+}
