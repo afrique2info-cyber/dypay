@@ -111,7 +111,7 @@ Deno.serve(async (req: Request) => {
 
     console.log("Payment updated successfully:", data);
 
-    // Create in-app notification for the merchant
+    // Send notification to the merchant (in-app + SMS/WhatsApp if enabled)
     if (data.merchant_id) {
       try {
         const notificationType = paymentRef.startsWith("POS-")
@@ -150,24 +150,31 @@ Deno.serve(async (req: Request) => {
         }
 
         if (notificationTitle) {
-          await supabase.from("merchant_notifications").insert({
-            merchant_id: data.merchant_id,
-            type: notificationType,
-            title: notificationTitle,
-            message: notificationMessage,
-            data: {
-              payment_ref: paymentRef,
-              amount,
-              currency,
-              status: paymentStatus,
-              transaction_id: transactionId,
+          await fetch(`${supabaseUrl}/functions/v1/send-notification`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${supabaseServiceKey}`,
             },
-            read: false,
+            body: JSON.stringify({
+              merchant_id: data.merchant_id,
+              type: notificationType,
+              title: notificationTitle,
+              message: notificationMessage,
+              data: {
+                payment_ref: paymentRef,
+                amount,
+                currency,
+                status: paymentStatus,
+                transaction_id: transactionId,
+              },
+              channels: ["in_app", "sms", "whatsapp"],
+            }),
           });
-          console.log("Notification created for merchant:", data.merchant_id);
+          console.log("Notification sent for merchant:", data.merchant_id);
         }
       } catch (notifError) {
-        console.error("Error creating notification:", notifError);
+        console.error("Error sending notification:", notifError);
       }
     }
 
