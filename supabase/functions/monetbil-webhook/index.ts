@@ -111,6 +111,66 @@ Deno.serve(async (req: Request) => {
 
     console.log("Payment updated successfully:", data);
 
+    // Create in-app notification for the merchant
+    if (data.merchant_id) {
+      try {
+        const notificationType = paymentRef.startsWith("POS-")
+          ? "pos_transaction"
+          : paymentRef.startsWith("ORD-")
+          ? "order"
+          : "payment";
+
+        let notificationTitle = "";
+        let notificationMessage = "";
+        const amount = data.total_amount || data.amount || 0;
+        const currency = data.currency || "XAF";
+
+        if (paymentStatus === "completed") {
+          notificationTitle = notificationType === "order"
+            ? "Commande payee"
+            : notificationType === "pos_transaction"
+            ? "Paiement POS recu"
+            : "Paiement recu";
+          notificationMessage = notificationType === "order"
+            ? `Commande ${paymentRef} - ${amount} ${currency} payee avec succes`
+            : notificationType === "pos_transaction"
+            ? `Transaction POS de ${amount} ${currency} completee`
+            : `Paiement de ${amount} ${currency} (${data.phone || data.customer_phone || ""}) confirme`;
+        } else if (paymentStatus === "failed") {
+          notificationTitle = notificationType === "order"
+            ? "Commande echouee"
+            : notificationType === "pos_transaction"
+            ? "Paiement POS echoue"
+            : "Paiement echoue";
+          notificationMessage = notificationType === "order"
+            ? `Le paiement pour la commande ${paymentRef} a echoue`
+            : notificationType === "pos_transaction"
+            ? `La transaction POS de ${amount} ${currency} a echoue`
+            : `Le paiement de ${amount} ${currency} a echoue`;
+        }
+
+        if (notificationTitle) {
+          await supabase.from("merchant_notifications").insert({
+            merchant_id: data.merchant_id,
+            type: notificationType,
+            title: notificationTitle,
+            message: notificationMessage,
+            data: {
+              payment_ref: paymentRef,
+              amount,
+              currency,
+              status: paymentStatus,
+              transaction_id: transactionId,
+            },
+            read: false,
+          });
+          console.log("Notification created for merchant:", data.merchant_id);
+        }
+      } catch (notifError) {
+        console.error("Error creating notification:", notifError);
+      }
+    }
+
     let webhookEvent = "";
     if (paymentRef.startsWith("POS-")) {
       webhookEvent = "pos.transaction.completed";

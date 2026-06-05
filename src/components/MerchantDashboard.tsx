@@ -21,6 +21,8 @@ import { OrdersList } from './OrdersList';
 import { SalesHistory } from './SalesHistory';
 import { StockManagement } from './StockManagement';
 import { getSupportedCurrencies, formatCurrency, type Currency } from '../lib/currency';
+import { NotificationBell } from './NotificationBell';
+import { NotificationPanel } from './NotificationPanel';
 
 interface Merchant {
   id: string;
@@ -316,6 +318,11 @@ export function MerchantDashboard() {
               </button>
             </div>
             <div className="flex items-center gap-3">
+              <NotificationBell
+                merchantId={merchant.id}
+                merchantCurrency={merchant.default_currency}
+                currencySymbol={currencySymbol}
+              />
               <div className="flex items-center gap-2 text-sm">
                 <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
                   {merchant.business_name.charAt(0).toUpperCase()}
@@ -614,6 +621,10 @@ export function MerchantDashboard() {
             <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 border border-gray-100">
               <MerchantSettings merchantId={merchant.id} />
             </div>
+          )}
+
+          {activeTab === 'notifications' && merchant && (
+            <NotificationPanel merchantId={merchant.id} />
           )}
 
           {activeTab === 'webhooks' && (

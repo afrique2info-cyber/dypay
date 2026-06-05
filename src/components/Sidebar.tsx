@@ -18,7 +18,8 @@ import {
   Link as LinkIcon,
   Webhook,
   ShoppingBag,
-  TrendingUp
+  TrendingUp,
+  Bell
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -40,6 +41,7 @@ export function Sidebar({ activeTab, onTabChange, businessName, onSignOut }: Sid
     { id: 'sales-history', icon: TrendingUp, label: 'Historique ventes' },
     { id: 'transactions', icon: History, label: 'Transactions' },
     { id: 'payment-links', icon: LinkIcon, label: 'Liens de paiement' },
+    { id: 'notifications', icon: Bell, label: 'Notifications' },
     { id: 'page-builder', icon: Palette, label: 'Personnalisation' },
     { id: 'virtual-cards', icon: CreditCard, label: 'Cartes virtuelles' },
     { id: 'withdrawals', icon: DollarSign, label: 'Retraits' },
