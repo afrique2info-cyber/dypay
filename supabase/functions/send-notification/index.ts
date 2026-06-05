@@ -16,37 +16,55 @@ interface SendNotificationRequest {
   channels?: ("in_app" | "sms" | "whatsapp")[];
 }
 
+/**
+ * Send SMS via Android SMS Gateway (free, open source)
+ * Install "SMS Gateway" app on an Android phone (e.g. sms-gateway.app or github.com/nicxk1979/AndroidSMSServer)
+ * The app exposes a local HTTP API that we call to send SMS through the phone's SIM card.
+ *
+ * Supported apps:
+ *  - SMS Gateway (Play Store) - exposes REST API at http://<phone-ip>:8080
+ *  - Android SMS Server (github) - same concept
+ *
+ * Env vars:
+ *  ANDROID_SMS_GATEWAY_URL  - e.g. http://192.168.1.50:8080
+ *  ANDROID_SMS_GATEWAY_KEY  - API key set in the SMS Gateway app (optional)
+ */
 async function sendSMS(phone: string, message: string): Promise<{ success: boolean; error?: string }> {
-  const twilioAccountSid = Deno.env.get("TWILIO_ACCOUNT_SID");
-  const twilioAuthToken = Deno.env.get("TWILIO_AUTH_TOKEN");
-  const twilioPhoneNumber = Deno.env.get("TWILIO_PHONE_NUMBER");
+  const gatewayUrl = Deno.env.get("ANDROID_SMS_GATEWAY_URL");
+  const gatewayKey = Deno.env.get("ANDROID_SMS_GATEWAY_KEY");
 
-  if (!twilioAccountSid || !twilioAuthToken || !twilioPhoneNumber) {
-    console.warn("Twilio credentials not configured - SMS not sent");
-    return { success: false, error: "Twilio not configured" };
+  if (!gatewayUrl) {
+    console.warn("ANDROID_SMS_GATEWAY_URL not configured - SMS not sent");
+    return { success: false, error: "Android SMS Gateway not configured" };
   }
 
   try {
-    const url = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
-    const body = new URLSearchParams({
-      To: phone,
-      From: twilioPhoneNumber,
-      Body: `Dypay: ${message}`,
-    });
+    const url = `${gatewayUrl.replace(/\/$/, "")}/sms`;
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (gatewayKey) {
+      headers["Authorization"] = `Bearer ${gatewayKey}`;
+    }
+
+    // Format phone number (remove spaces, ensure + prefix)
+    const formattedPhone = phone.replace(/\s/g, "").startsWith("+")
+      ? phone.replace(/\s/g, "")
+      : `+${phone.replace(/\s/g, "")}`;
 
     const response = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Basic ${btoa(`${twilioAccountSid}:${twilioAuthToken}`)}`,
-      },
-      body: body.toString(),
+      headers,
+      body: JSON.stringify({
+        to: formattedPhone,
+        message: `Dypay: ${message}`,
+      }),
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Twilio error:", errorData);
-      return { success: false, error: errorData.message || "Twilio API error" };
+      const errorText = await response.text();
+      console.error("Android SMS Gateway error:", response.status, errorText);
+      return { success: false, error: `SMS Gateway error: ${response.status}` };
     }
 
     console.log("SMS sent successfully to:", phone);
@@ -57,37 +75,36 @@ async function sendSMS(phone: string, message: string): Promise<{ success: boole
   }
 }
 
+/**
+ * Send WhatsApp message via CallMeBot (free)
+ * CallMeBot allows sending WhatsApp messages for free.
+ * Setup: send "I allow callmebot to send me messages" to +34 644 52 74 88 on WhatsApp
+ * Then you'll receive an API key.
+ *
+ * Env vars:
+ *  CALLMEBOT_API_KEY   - API key received from CallMeBot
+ *
+ * URL format: https://api.callmebot.com/whatsapp.php?phone=<phone>&text=<text>&apikey=<key>
+ */
 async function sendWhatsApp(phone: string, message: string): Promise<{ success: boolean; error?: string }> {
-  const whatsappApiToken = Deno.env.get("WHATSAPP_API_TOKEN");
-  const whatsappPhoneNumberId = Deno.env.get("WHATSAPP_PHONE_NUMBER_ID");
+  const callmebotApiKey = Deno.env.get("CALLMEBOT_API_KEY");
 
-  if (!whatsappApiToken || !whatsappPhoneNumberId) {
-    console.warn("WhatsApp API credentials not configured - WhatsApp not sent");
-    return { success: false, error: "WhatsApp not configured" };
+  if (!callmebotApiKey) {
+    console.warn("CALLMEBOT_API_KEY not configured - WhatsApp not sent");
+    return { success: false, error: "CallMeBot not configured" };
   }
 
   try {
-    const formattedPhone = phone.startsWith("+") ? phone.replace("+", "") : phone;
-    const url = `https://graph.facebook.com/v21.0/${whatsappPhoneNumberId}/messages`;
+    const formattedPhone = phone.replace(/\s/g, "").replace("+", "");
+    const encodedText = encodeURIComponent(`*Dypay*\n\n${message}`);
+    const url = `https://api.callmebot.com/whatsapp.php?phone=${formattedPhone}&text=${encodedText}&apikey=${callmebotApiKey}`;
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${whatsappApiToken}`,
-      },
-      body: JSON.stringify({
-        messaging_product: "whatsapp",
-        to: formattedPhone,
-        type: "text",
-        text: { body: message },
-      }),
-    });
+    const response = await fetch(url);
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error("WhatsApp API error:", errorData);
-      return { success: false, error: errorData.error?.message || "WhatsApp API error" };
+      const errorText = await response.text();
+      console.error("CallMeBot error:", response.status, errorText);
+      return { success: false, error: `CallMeBot error: ${response.status}` };
     }
 
     console.log("WhatsApp message sent successfully to:", phone);
@@ -154,7 +171,7 @@ Deno.serve(async (req: Request) => {
 
     const phone = merchant.notification_phone;
 
-    // Send SMS if enabled
+    // Send SMS via Android SMS Gateway if enabled
     if (defaultChannels.includes("sms") && merchant.sms_notifications_enabled && phone) {
       results.sms = await sendSMS(phone, message);
     } else if (defaultChannels.includes("sms") && !merchant.sms_notifications_enabled) {
@@ -163,9 +180,9 @@ Deno.serve(async (req: Request) => {
       results.sms = { success: false, error: "No phone number configured" };
     }
 
-    // Send WhatsApp if enabled
+    // Send WhatsApp via CallMeBot if enabled
     if (defaultChannels.includes("whatsapp") && merchant.whatsapp_notifications_enabled && phone) {
-      results.whatsapp = await sendWhatsApp(phone, `Dypay - ${title}\n\n${message}`);
+      results.whatsapp = await sendWhatsApp(phone, `*${title}*\n\n${message}`);
     } else if (defaultChannels.includes("whatsapp") && !merchant.whatsapp_notifications_enabled) {
       results.whatsapp = { success: false, error: "WhatsApp notifications disabled by merchant" };
     } else if (defaultChannels.includes("whatsapp") && !phone) {

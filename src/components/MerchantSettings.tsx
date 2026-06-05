@@ -146,9 +146,10 @@ export function MerchantSettings({ merchantId }: MerchantSettingsProps) {
           <div className="flex items-center gap-3 mb-5">
             <Bell className="w-5 h-5 text-indigo-600" />
             <h3 className="font-semibold text-gray-900">Notifications par SMS et WhatsApp</h3>
+            <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Gratuit</span>
           </div>
           <p className="text-sm text-gray-600 mb-5">
-            Recevez une notification par SMS ou WhatsApp a chaque fois qu'un paiement est confirme ou echoue.
+            Recevez une notification par SMS ou WhatsApp a chaque fois qu'un paiement est confirme ou echoue. Services 100% gratuits.
           </p>
 
           <div className="space-y-5">
@@ -167,49 +168,67 @@ export function MerchantSettings({ merchantId }: MerchantSettingsProps) {
               <p className="text-xs text-gray-400 mt-1">Entrez votre numero au format international (ex: +237612345678)</p>
             </div>
 
-            <div className="space-y-3">
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <div className="relative">
-                  <input
-                    type="checkbox"
-                    checked={smsEnabled}
-                    onChange={(e) => setSmsEnabled(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full transition-colors peer-checked:bg-indigo-600"></div>
-                  <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+            <div className="space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      checked={smsEnabled}
+                      onChange={(e) => setSmsEnabled(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full transition-colors peer-checked:bg-blue-600"></div>
+                    <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-gray-700">Notifications par SMS</span>
+                    <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded">GRATUIT</span>
+                  </div>
+                </label>
+                <div className="mt-3 ml-14">
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Via <strong>Android SMS Gateway</strong> - Installez l'app "SMS Gateway" sur un telephone Android. L'app utilise la carte SIM du telephone pour envoyer les SMS, sans frais supplementaires.
+                  </p>
+                  <div className="mt-2 flex items-center gap-1.5">
+                    <svg className="w-3.5 h-3.5 text-green-600" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
+                    <span className="text-xs text-green-700 font-medium">Aucun abonnement - utilise votre forfait SMS</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4 text-indigo-600" />
-                  <span className="text-sm font-medium text-gray-700">Notifications par SMS</span>
-                </div>
-              </label>
-              <p className="text-xs text-gray-500 ml-14">
-                Recevez un SMS a chaque paiement confirme ou echoue. Service Twilio requis.
-              </p>
+              </div>
 
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <div className="relative">
-                  <input
-                    type="checkbox"
-                    checked={whatsappEnabled}
-                    onChange={(e) => setWhatsappEnabled(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-green-300 rounded-full transition-colors peer-checked:bg-green-500"></div>
-                  <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      checked={whatsappEnabled}
+                      onChange={(e) => setWhatsappEnabled(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-green-300 rounded-full transition-colors peer-checked:bg-green-500"></div>
+                    <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                      <path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.503 3.935 1.393 5.613L0 24l6.613-1.345A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.82c-1.928 0-3.79-.508-5.426-1.47l-.389-.232-3.774.769.797-3.637-.253-.403A9.784 9.784 0 012.18 12c0-5.422 4.398-9.82 9.82-9.82 5.422 0 9.82 4.398 9.82 9.82 0 5.422-4.398 9.82-9.82 9.82z"/>
+                    </svg>
+                    <span className="text-sm font-medium text-gray-700">Notifications par WhatsApp</span>
+                    <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded">GRATUIT</span>
+                  </div>
+                </label>
+                <div className="mt-3 ml-14">
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Via <strong>CallMeBot</strong> - Service gratuit d'envoi WhatsApp. Envoyez "I allow callmebot to send me messages" au +34 644 52 74 88 sur WhatsApp pour recevoir votre cle API.
+                  </p>
+                  <div className="mt-2 flex items-center gap-1.5">
+                    <svg className="w-3.5 h-3.5 text-green-600" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
+                    <span className="text-xs text-green-700 font-medium">Aucun frais - utilise votre connexion WhatsApp</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.503 3.935 1.393 5.613L0 24l6.613-1.345A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.82c-1.928 0-3.79-.508-5.426-1.47l-.389-.232-3.774.769.797-3.637-.253-.403A9.784 9.784 0 012.18 12c0-5.422 4.398-9.82 9.82-9.82 5.422 0 9.82 4.398 9.82 9.82 0 5.422-4.398 9.82-9.82 9.82z"/>
-                  </svg>
-                  <span className="text-sm font-medium text-gray-700">Notifications par WhatsApp</span>
-                </div>
-              </label>
-              <p className="text-xs text-gray-500 ml-14">
-                Recevez un message WhatsApp a chaque paiement confirme ou echoue. WhatsApp Business API requis.
-              </p>
+              </div>
             </div>
 
             <div className="flex items-center gap-3 pt-2">
